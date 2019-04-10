@@ -38,8 +38,16 @@
         android:layout_height="wrap_content"
         android:id="@+id/editTextMessage" />
     <Button
+        android:id="@+id/buttonSend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonSend"
         android:text="Send"/>
+
+    <Button
+        android:id="@+id/buttonAutomatic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send this later"
+
+        />
 </LinearLayout>

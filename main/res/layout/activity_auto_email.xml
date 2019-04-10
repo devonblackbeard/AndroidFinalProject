@@ -11,6 +11,8 @@
         android:id="@+id/set_email_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="100dp"
         android:text="Set up an automatic email"
 
         />
@@ -20,6 +22,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
+        />
+
+
+    <Button
+        android:id="@+id/button-alert"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="120dp"
+        android:text="Send at this time"
 
 
         />

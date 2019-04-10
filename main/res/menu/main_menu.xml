@@ -14,4 +14,6 @@
         android:id="@+id/menu_item_automaticEmail"
         android:title="@string/auto"
         />
+
+
 </menu>

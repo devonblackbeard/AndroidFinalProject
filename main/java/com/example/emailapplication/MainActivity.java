@@ -18,6 +18,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.Properties;
 import javax.mail.PasswordAuthentication;
@@ -28,16 +29,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     static final String TAG = "MainActivity";
 
     //Declaring EditText
-    private EditText editTextEmail;
-    private EditText editTextSubject;
-    private EditText editTextMessage;
+    EditText editTextEmail;
+    EditText editTextSubject;
+    EditText editTextMessage;
 
     SharedPreferences prefs;
     View mainView;
 
     //Send button
-    private Button buttonSend;
+    Button buttonSend;
+    //Automatic activity button
+    Button buttonAuto;
 
+    Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -50,9 +54,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editTextMessage = (EditText) findViewById(R.id.editTextMessage);
 
         buttonSend = (Button) findViewById(R.id.buttonSend);
+        buttonAuto = (Button) findViewById(R.id.buttonAutomatic);
 
         //Adding click listener
         buttonSend.setOnClickListener(this);
+        buttonAuto.setOnClickListener(this);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -83,19 +89,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onResume();
     }
 
-    private void sendEmail()
+    private void SendEmail()
     {
         //Getting content for email
-        String email = editTextEmail.getText().toString().trim();
+        String address = editTextEmail.getText().toString().trim();
         String subject = editTextSubject.getText().toString().trim();
         String message = editTextMessage.getText().toString().trim();
 
-        //Creating SendMail object
-        SendEmail send = new SendEmail(this, email, subject, message);
+        //Ensure data is entered
+        if (address.isEmpty() || message.isEmpty())
+        {
+            Toast.makeText(this, "Please enter a recipient and a message", Toast.LENGTH_LONG).show();
+        }
 
-        //Executing sendmail to send email
-        send.execute();
+        else
+        {
+            //Creating SendMail object
+            SendEmail send = new SendEmail(this, address, subject, message);
+            send.execute();
+
+            //Clear the screen
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -134,7 +150,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v)
     {
-        sendEmail();
+        switch(v.getId())
+        {
+            case R.id.buttonSend:
+                SendEmail();
+                break;
+
+
+            case R.id.buttonAutomatic:
+                PrepareEmailForLater();
+                break;
+        }
+    }
+
+
+    public void PrepareEmailForLater()
+    {
+        //check to make sure data is entered before we send it to the AutoEmail Class.
+
+        //Getting content for email
+        String address = editTextEmail.getText().toString().trim();
+        String subject = editTextSubject.getText().toString().trim();
+        String message = editTextMessage.getText().toString().trim();
+
+        //Ensure data is entered
+        if (address.isEmpty() || message.isEmpty())
+        {
+            Toast.makeText(this, "Please enter a recipient and a message", Toast.LENGTH_LONG).show();
+        }
+
+        else
+        {
+            intent = new Intent(this, AutoEmail.class);
+            startActivity(intent);
+
+            //give it data, return data and dateTime
+        }
     }
 
 }

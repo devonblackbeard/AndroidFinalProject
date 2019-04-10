@@ -24,15 +24,17 @@ public class SendEmail extends AsyncTask<Void,Void,Void>
     private Session session;
 
     //Information to send email
+    private String message;
     private String email;
     private String subject;
-    private String message;
+
 
     //Progress dialog to show while sending email
     private ProgressDialog progressDialog;
 
     //Class Constructor
-    public SendEmail(Context context, String email, String subject, String message){
+    public SendEmail(Context context, String email, String subject, String message)
+    {
         //Initializing variables
         this.context = context;
         this.email = email;
@@ -82,6 +84,7 @@ public class SendEmail extends AsyncTask<Void,Void,Void>
                 });
 
         try {
+
             //Creating MimeMessage object
 
             //this uses the JAR files
