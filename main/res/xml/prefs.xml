@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="username"
+        android:title="Login Name"
+        android:summary="Allows you to enter your alias"/>
+
+    <EditTextPreference
+        android:key="password"
+        android:title="Password"
+        android:summary="Enter your password here"
+        android:password="true"/>
+
+
+    <ListPreference
+        android:key="main_bg_color"
+        android:title="Background Color"
+        android:summary="Choose background color from a list"
+        android:entries="@array/color_names"
+        android:entryValues="@array/color_values"
+        />
+
+</PreferenceScreen>
