@@ -46,7 +46,7 @@ public class AutoEmail extends AppCompatActivity implements View.OnClickListener
     {
         Log.d(TAG,"inOnClick of AUTO EMAIL**************************");
         autoDate = setDate.getText().toString();
-        Toast.makeText(this, "The date in string is "+ autoDate, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "The date in string is "+ autoDate, Toast.LENGTH_LONG).show();
 
         Intent intent = new Intent(this, MainActivity.class);
 

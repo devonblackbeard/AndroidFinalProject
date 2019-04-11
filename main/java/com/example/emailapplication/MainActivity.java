@@ -22,10 +22,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.TimeZone;
+
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
@@ -74,13 +79,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Return Data from the AutoEmail Class
         if (address!= null)
         {
-            Toast.makeText(this, "not null address", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "not null address", Toast.LENGTH_LONG).show();
 
 //            Toast.makeText(this, "address"+ address, Toast.LENGTH_SHORT).show();
 ////            Toast.makeText(this, "subject" + subject, Toast.LENGTH_SHORT).show();
 ////            Toast.makeText(this, "message" + message, Toast.LENGTH_SHORT).show();
 ////            Toast.makeText(this, "sendate" + date + message, Toast.LENGTH_SHORT).show();
             AutoSend(address, subject, message, date);
+        }
+
+        else
+        {
+            Toast.makeText(this, "The address is null", Toast.LENGTH_SHORT).show();
         }
 
 
@@ -116,8 +126,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             window.setStatusBarColor(Color.parseColor("#f6f6f6"));
         }
 
-
-       // Toast.makeText(this, "the time is "+ date, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -150,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Clear the screen
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
@@ -192,6 +199,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(v.getId())
         {
             case R.id.buttonSend:
+
+//                Date currentTime = Calendar.getInstance().getTime();
+//                Toast.makeText(this, "time:"+currentTime, Toast.LENGTH_SHORT).show();
+
+//                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+//                String currentDateandTime = sdf.format(new Date());
+               //Toast.makeText(this, "time: "+ currentDateandTime, Toast.LENGTH_SHORT).show();
+                //prints 13:35
+
+//                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+//                format.setTimeZone (TimeZone.getDefault());
+
+//                String n = "10:30";
+//                ParsePosition pos = new ParsePosition(0);
+//
+//                Date sample_date = format.parse(n,pos);
+//                Toast.makeText(this, "date is now: "+ sample_date, Toast.LENGTH_SHORT).show();
+//
+//
+//                long m = sample_date.getTime();
+//                Toast.makeText(this, "m: "+ m, Toast.LENGTH_SHORT).show();
+                //SimpleDateFormat curr = new SimpleDateFormat("HH:mm");
+
+
+                //this prints time as a string.
+//                String time = d.format(sample_date);
+//                Toast.makeText(this, "time:" + time, Toast.LENGTH_SHORT).show();
+
+
                 SendEmail();
                 break;
 
@@ -205,7 +241,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void PrepareEmailForLater()
     {
-
         //Getting content for email
         String address = editTextEmail.getText().toString().trim();
         String subject = editTextSubject.getText().toString().trim();
@@ -240,33 +275,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Log.d(TAG, "In AUTO SEND **********    ************    **********");
         //set up date checker to know when to send the email
 
-        DateFormat df = new SimpleDateFormat("dd MM yyyy, HH:mm");
-        String date_computer = df.format(Calendar.getInstance().getTime()).toString();
+
+        //can we format a string into a date object?
+        //String sDate1="11/04/2019/14:20";
+        Date timestamp = new Date ();
+
+        try {
+            Date alertDate = new SimpleDateFormat("dd/MM/yyyy/HH:mm").parse(autoDate);
+            Toast.makeText(this, "date1: "+ alertDate, Toast.LENGTH_SHORT).show();
+
+            //Get difference between our two dates (both Date objs)
+            long mills = alertDate.getTime() - timestamp.getTime();
+            Toast.makeText(this, "Difference: "+ mills, Toast.LENGTH_SHORT).show();
+
+            //gives a difference in miliseconds. This is my Delay in Sending the email.
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
 
-        Toast.makeText(this, "get ready", Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, ": " + date_computer, Toast.LENGTH_SHORT).show();
-        Toast.makeText(this, ": " + autoDate, Toast.LENGTH_SHORT).show();
 
-        Boolean boolSent =false;
+//        if (date_computer.trim().equalsIgnoreCase(autoDate.trim()))
+//            {
+//                Toast.makeText(this, "The strings match!", Toast.LENGTH_LONG).show();
+//                //Creating the SendMail object
+//                SendEmail send = new SendEmail(this, add, sub, mess);
+//                send.execute();
+//            }
+//
+//            else
+//            {
+//                Toast.makeText(this, "Strings dont match", Toast.LENGTH_SHORT).show();
+//            }
 
-
-//        while (boolSent ==false)
-//        {
-            if (date_computer.trim().equalsIgnoreCase(autoDate.trim()))
-            {
-                Toast.makeText(this, "The strings match!", Toast.LENGTH_LONG).show();
-                //Creating the SendMail object
-                SendEmail send = new SendEmail(this, add, sub, mess);
-                send.execute();
-                boolSent = true;
-            }
-            
-            else
-            {
-                Toast.makeText(this, "Strings dont match", Toast.LENGTH_SHORT).show();
-            }
-//        }
 
 
     }
