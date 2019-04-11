@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,15 +20,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.TimeZone;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -125,8 +121,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //top bar
             window.setStatusBarColor(Color.parseColor("#f6f6f6"));
         }
-
     }
+
 
     @Override
     protected void onResume()
@@ -154,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Creating SendMail object
             SendEmail send = new SendEmail(this, address, subject, message);
             send.execute();
-
             //Clear the screen
         }
     }
@@ -205,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 //                String currentDateandTime = sdf.format(new Date());
-               //Toast.makeText(this, "time: "+ currentDateandTime, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "time: "+ currentDateandTime, Toast.LENGTH_SHORT).show();
                 //prints 13:35
 
 //                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
@@ -262,12 +257,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             intent.putExtra("message", message);
 
             startActivity(intent);
-
         }
     }
 
     //This will send the Email when the entered Date for AUTO SEND has been reached.
-   // AutoSend(address, subject, message, date);
+    // AutoSend(address, subject, message, date);
 
     public void AutoSend(String add, String sub, String mess, String autoDate)
     {
@@ -278,38 +272,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //can we format a string into a date object?
         //String sDate1="11/04/2019/14:20";
+
         Date timestamp = new Date ();
 
         try {
             Date alertDate = new SimpleDateFormat("dd/MM/yyyy/HH:mm").parse(autoDate);
-            Toast.makeText(this, "date1: "+ alertDate, Toast.LENGTH_SHORT).show();
+           // Toast.makeText(this, "date1: "+ alertDate, Toast.LENGTH_SHORT).show();
 
-            //Get difference between our two dates (both Date objs)
+            //Get difference between our two dates (both Date objects)
             long mills = alertDate.getTime() - timestamp.getTime();
-            Toast.makeText(this, "Difference: "+ mills, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Difference: "+ mills, Toast.LENGTH_LONG).show();
+
+
+            final ScheduledExecutorService scheduler =
+                    Executors.newScheduledThreadPool(1);
+
+            scheduler.schedule(
+                    new Runnable()
+                    {
+                        public void run()
+                        {
+                            SendEmail send = new SendEmail(getApplicationContext(), address, subject, message);
+                            send.execute();
+                            DelayedEmail();
+                            Toast.makeText(MainActivity.this, "Should have sent", Toast.LENGTH_SHORT).show();
+//                            monitorTask.cancel(true);
+
+                        }
+                    }, mills, TimeUnit.MILLISECONDS);
 
             //gives a difference in miliseconds. This is my Delay in Sending the email.
-        } catch (ParseException e) {
+        } 
+        
+        catch (ParseException e) {
+            //Toast.makeText(this, "in Catch", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
+            
         }
+    }
 
 
+    private void DelayedEmail()
+    {
+        Log.d(TAG, "IN DELAYED************************");
+        Toast.makeText(this, "Did you reach here???", Toast.LENGTH_SHORT).show();
+        SendEmail send = new SendEmail(this, address, subject, message);
+        send.execute();
 
-//        if (date_computer.trim().equalsIgnoreCase(autoDate.trim()))
-//            {
-//                Toast.makeText(this, "The strings match!", Toast.LENGTH_LONG).show();
-//                //Creating the SendMail object
-//                SendEmail send = new SendEmail(this, add, sub, mess);
-//                send.execute();
-//            }
-//
-//            else
-//            {
-//                Toast.makeText(this, "Strings dont match", Toast.LENGTH_SHORT).show();
-//            }
-
-
-
+        Toast.makeText(this, "EMail should have sent", Toast.LENGTH_SHORT).show();
     }
 
 }
