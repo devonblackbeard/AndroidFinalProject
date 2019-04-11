@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,6 +21,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Properties;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
@@ -36,17 +41,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     SharedPreferences prefs;
     View mainView;
 
-    //Send button
+    //Send Email button
     Button buttonSend;
     //Automatic activity button
     Button buttonAuto;
 
+    String address;
+    String subject;
+    String message;
+    String date;
+
     Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
+        Log.d(TAG, "In OnCreate of MAIN ACTIVITY");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //get back the data
+        intent = getIntent();
+
+        //Get Data from Main Activity- will return this
+        address= intent.getStringExtra("address");
+        subject= intent.getStringExtra("subject");
+        message= intent.getStringExtra("message");
+        date = intent.getStringExtra("sendDate");
+
+
+        //Return Data from the AutoEmail Class
+        if (address!= null)
+        {
+            Toast.makeText(this, "not null address", Toast.LENGTH_LONG).show();
+
+//            Toast.makeText(this, "address"+ address, Toast.LENGTH_SHORT).show();
+////            Toast.makeText(this, "subject" + subject, Toast.LENGTH_SHORT).show();
+////            Toast.makeText(this, "message" + message, Toast.LENGTH_SHORT).show();
+////            Toast.makeText(this, "sendate" + date + message, Toast.LENGTH_SHORT).show();
+            AutoSend(address, subject, message, date);
+        }
+
 
         //Initializing the views
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
@@ -79,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //top bar
             window.setStatusBarColor(Color.parseColor("#f6f6f6"));
         }
+
+
+       // Toast.makeText(this, "the time is "+ date, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -166,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void PrepareEmailForLater()
     {
-        //check to make sure data is entered before we send it to the AutoEmail Class.
 
         //Getting content for email
         String address = editTextEmail.getText().toString().trim();
@@ -181,11 +219,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         else
         {
+            //give it email data, return data and dateTime
+
             intent = new Intent(this, AutoEmail.class);
+            intent.putExtra("address", address);
+            intent.putExtra("subject", subject);
+            intent.putExtra("message", message);
+
             startActivity(intent);
 
-            //give it data, return data and dateTime
         }
+    }
+
+    //This will send the Email when the entered Date for AUTO SEND has been reached.
+   // AutoSend(address, subject, message, date);
+
+    public void AutoSend(String add, String sub, String mess, String autoDate)
+    {
+        //Toast.makeText(this, "BACK HERE!@", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "In AUTO SEND **********    ************    **********");
+        //set up date checker to know when to send the email
+
+        DateFormat df = new SimpleDateFormat("dd MM yyyy, HH:mm");
+        String date_computer = df.format(Calendar.getInstance().getTime()).toString();
+
+
+        Toast.makeText(this, "get ready", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, ": " + date_computer, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, ": " + autoDate, Toast.LENGTH_SHORT).show();
+
+        Boolean boolSent =false;
+
+
+//        while (boolSent ==false)
+//        {
+            if (date_computer.trim().equalsIgnoreCase(autoDate.trim()))
+            {
+                Toast.makeText(this, "The strings match!", Toast.LENGTH_LONG).show();
+                //Creating the SendMail object
+                SendEmail send = new SendEmail(this, add, sub, mess);
+                send.execute();
+                boolSent = true;
+            }
+            
+            else
+            {
+                Toast.makeText(this, "Strings dont match", Toast.LENGTH_SHORT).show();
+            }
+//        }
+
+
     }
 
 }

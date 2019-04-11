@@ -22,11 +22,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
+        android:hint="dd/mm/yyyy, time"
         />
 
 
     <Button
-        android:id="@+id/button-alert"
+        android:id="@+id/buttonSaveAlert"
         android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="120dp"
