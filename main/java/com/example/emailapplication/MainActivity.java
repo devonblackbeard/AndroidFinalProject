@@ -280,11 +280,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            // Toast.makeText(this, "date1: "+ alertDate, Toast.LENGTH_SHORT).show();
 
             //Get difference between our two dates (both Date objects)
-            long mills = alertDate.getTime() - timestamp.getTime();
-            Toast.makeText(this, "Difference: "+ mills, Toast.LENGTH_LONG).show();
+            long delay = alertDate.getTime() - timestamp.getTime();
+            Toast.makeText(this, "Difference: "+ delay, Toast.LENGTH_LONG).show();
 
 
-            final ScheduledExecutorService scheduler =
+            ScheduledExecutorService scheduler =
                     Executors.newScheduledThreadPool(1);
 
             scheduler.schedule(
@@ -292,34 +292,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         public void run()
                         {
-                            SendEmail send = new SendEmail(getApplicationContext(), address, subject, message);
-                            send.execute();
-                            DelayedEmail();
-                            Toast.makeText(MainActivity.this, "Should have sent", Toast.LENGTH_SHORT).show();
-//                            monitorTask.cancel(true);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
 
+                                    Toast.makeText(MainActivity.this, "DO U SEE THIS", Toast.LENGTH_LONG).show();
+
+                                    SendEmail send = new SendEmail(MainActivity.this, address, subject, message);
+                                    send.execute();
+                                    Toast.makeText(MainActivity.this, "Execute", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
-                    }, mills, TimeUnit.MILLISECONDS);
+                    }, delay, TimeUnit.MILLISECONDS);
 
-            //gives a difference in miliseconds. This is my Delay in Sending the email.
+            //gives a difference in milli seconds. This is my Delay in Sending the email.
         } 
         
         catch (ParseException e) {
             //Toast.makeText(this, "in Catch", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
-            
         }
     }
 
-
-    private void DelayedEmail()
-    {
-        Log.d(TAG, "IN DELAYED************************");
-        Toast.makeText(this, "Did you reach here???", Toast.LENGTH_SHORT).show();
-        SendEmail send = new SendEmail(this, address, subject, message);
-        send.execute();
-
-        Toast.makeText(this, "EMail should have sent", Toast.LENGTH_SHORT).show();
-    }
 
 }

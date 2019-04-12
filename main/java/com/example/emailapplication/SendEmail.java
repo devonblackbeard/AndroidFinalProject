@@ -3,6 +3,7 @@ package com.example.emailapplication;
 import android.os.AsyncTask;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.StrictMode;
 import android.widget.Toast;
 
 import java.util.Properties;
@@ -20,7 +21,7 @@ public class SendEmail extends AsyncTask<Void,Void,Void>
 {
 
     //Declaring Variables
-    private Context context;
+    Context context;
     private Session session;
 
     //Information to send email
@@ -30,12 +31,13 @@ public class SendEmail extends AsyncTask<Void,Void,Void>
 
 
     //Progress dialog to show while sending email
-    private ProgressDialog progressDialog;
+    ProgressDialog progressDialog;
 
     //Class Constructor
     public SendEmail(Context context, String email, String subject, String message)
     {
         //Initializing variables
+
         this.context = context;
         this.email = email;
         this.subject = subject;
@@ -45,7 +47,13 @@ public class SendEmail extends AsyncTask<Void,Void,Void>
     @Override
     protected void onPreExecute()
     {
+
         super.onPreExecute();
+
+        //2 new lines
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+
         //Showing progress dialog while sending email
         progressDialog = ProgressDialog.show(context,"Sending message","just a few seconds...",false,false);
     }
