@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#bca856"
     tools:context=".AutoEmail">
 
     <TextView
@@ -13,7 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="100dp"
-        android:text="Set up an automatic email"
+        android:text="Set up an automatic email\n  (Must be 24 Hour Format)"
+
 
         />
 

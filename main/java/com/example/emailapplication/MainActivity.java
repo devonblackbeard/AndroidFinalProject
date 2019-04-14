@@ -1,5 +1,6 @@
 package com.example.emailapplication;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -7,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Intent intent;
 
+    String subject_create;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -75,13 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Return Data from the AutoEmail Class
         if (address!= null)
         {
-            //Toast.makeText(this, "not null address", Toast.LENGTH_LONG).show();
-
-//            Toast.makeText(this, "address"+ address, Toast.LENGTH_SHORT).show();
-////            Toast.makeText(this, "subject" + subject, Toast.LENGTH_SHORT).show();
-////            Toast.makeText(this, "message" + message, Toast.LENGTH_SHORT).show();
-////            Toast.makeText(this, "sendate" + date + message, Toast.LENGTH_SHORT).show();
-            AutoSend(address, subject, message, date);
+            AutoSend(date);
         }
 
         else
@@ -98,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonSend = (Button) findViewById(R.id.buttonSend);
         buttonAuto = (Button) findViewById(R.id.buttonAutomatic);
 
+
         //Adding click listener
-        buttonSend.setOnClickListener(this);
         buttonAuto.setOnClickListener(this);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -121,6 +119,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //top bar
             window.setStatusBarColor(Color.parseColor("#f6f6f6"));
         }
+        onButtonClickListener();
+    }
+
+    public void onButtonClickListener()
+    {
+
+        subject_create = editTextSubject.getText().toString().trim();
+
+        buttonSend.setOnClickListener(
+                new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v)
+                    {
+                        if (subject_create.isEmpty() )
+                        {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setMessage("Email has no subject")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            SendEmail();
+                                        }
+                                    })
+                                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                            AlertDialog alert = builder.create();
+                            alert.setTitle("Still send this email?");
+                            alert.show();
+                        }
+
+                        else
+                        {
+                            SendEmail();
+                        }
+                    }
+                }
+        );
     }
 
 
@@ -194,35 +235,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(v.getId())
         {
             case R.id.buttonSend:
-
-//                Date currentTime = Calendar.getInstance().getTime();
-//                Toast.makeText(this, "time:"+currentTime, Toast.LENGTH_SHORT).show();
-
-//                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-//                String currentDateandTime = sdf.format(new Date());
-                //Toast.makeText(this, "time: "+ currentDateandTime, Toast.LENGTH_SHORT).show();
-                //prints 13:35
-
-//                SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-//                format.setTimeZone (TimeZone.getDefault());
-
-//                String n = "10:30";
-//                ParsePosition pos = new ParsePosition(0);
-//
-//                Date sample_date = format.parse(n,pos);
-//                Toast.makeText(this, "date is now: "+ sample_date, Toast.LENGTH_SHORT).show();
-//
-//
-//                long m = sample_date.getTime();
-//                Toast.makeText(this, "m: "+ m, Toast.LENGTH_SHORT).show();
-                //SimpleDateFormat curr = new SimpleDateFormat("HH:mm");
-
-
-                //this prints time as a string.
-//                String time = d.format(sample_date);
-//                Toast.makeText(this, "time:" + time, Toast.LENGTH_SHORT).show();
-
-
                 SendEmail();
                 break;
 
@@ -263,26 +275,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //This will send the Email when the entered Date for AUTO SEND has been reached.
     // AutoSend(address, subject, message, date);
 
-    public void AutoSend(String add, String sub, String mess, String autoDate)
+    public void AutoSend(String autoDate)
     {
         //Toast.makeText(this, "BACK HERE!@", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "In AUTO SEND **********    ************    **********");
         //set up date checker to know when to send the email
 
-
-        //can we format a string into a date object?
-        //String sDate1="11/04/2019/14:20";
-
         Date timestamp = new Date ();
 
         try {
             Date alertDate = new SimpleDateFormat("dd/MM/yyyy/HH:mm").parse(autoDate);
-           // Toast.makeText(this, "date1: "+ alertDate, Toast.LENGTH_SHORT).show();
 
             //Get difference between our two dates (both Date objects)
             long delay = alertDate.getTime() - timestamp.getTime();
-            Toast.makeText(this, "Difference: "+ delay, Toast.LENGTH_LONG).show();
 
+            long delay_minutes = delay/1000 /60;
+            Toast.makeText(this, "Message will send in "+ delay_minutes+ " minutes", Toast.LENGTH_LONG).show();
 
             ScheduledExecutorService scheduler =
                     Executors.newScheduledThreadPool(1);
@@ -306,14 +314,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }, delay, TimeUnit.MILLISECONDS);
 
-            //gives a difference in milli seconds. This is my Delay in Sending the email.
+            //delay variable gives a difference in milli seconds. This is my Delay in Sending the email.
         } 
         
         catch (ParseException e) {
-            //Toast.makeText(this, "in Catch", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
     }
-
 
 }
