@@ -302,9 +302,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         {
                             runOnUiThread(new Runnable() {
                                 @Override
-                                public void run() {
-
-                                    Toast.makeText(MainActivity.this, "DO U SEE THIS", Toast.LENGTH_LONG).show();
+                                public void run() {                                   
 
                                     SendEmail send = new SendEmail(MainActivity.this, address, subject, message);
                                     send.execute();
